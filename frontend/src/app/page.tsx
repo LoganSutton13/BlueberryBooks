@@ -2,9 +2,13 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import { colors } from '@/theme';
 
 export default function Home() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     // Register service worker for PWA
@@ -18,43 +22,86 @@ export default function Home() {
           console.log('Service Worker registration failed:', error);
         });
     }
-  }, []);
+
+    // Redirect to dashboard if authenticated
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
+
+  if (isAuthenticated) {
+    return null; // Will redirect
+  }
 
   return (
-    <main style={{ padding: '2rem', textAlign: 'center' }}>
-      <h1 style={{ color: '#000000', marginBottom: '1rem' }}>
-        Welcome to BlueberryBooks
-      </h1>
-      <p style={{ color: '#333333', marginBottom: '2rem' }}>
-        Your personal book diary
-      </p>
-      <button
-        onClick={() => router.push('/login')}
-        style={{
-          padding: '0.75rem 1.5rem',
-          backgroundColor: '#8B6F47',
-          color: '#FFFFFF',
-          border: 'none',
-          borderRadius: '4px',
-          fontSize: '1rem',
-          marginRight: '1rem',
-        }}
-      >
-        Login
-      </button>
-      <button
-        onClick={() => router.push('/register')}
-        style={{
-          padding: '0.75rem 1.5rem',
-          backgroundColor: '#D4A574',
-          color: '#000000',
-          border: 'none',
-          borderRadius: '4px',
-          fontSize: '1rem',
-        }}
-      >
-        Register
-      </button>
+    <main style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+      backgroundColor: colors.background,
+    }}>
+      <div style={{
+        textAlign: 'center',
+        maxWidth: '600px',
+      }}>
+        <h1 style={{
+          color: colors.textPrimary,
+          marginBottom: '1rem',
+          fontSize: '3rem',
+          fontWeight: 'bold',
+        }}>
+          BlueberryBooks
+        </h1>
+        <p style={{
+          color: colors.textSecondary,
+          marginBottom: '3rem',
+          fontSize: '1.2rem',
+        }}>
+          Your personal book diary for reviews and ratings
+        </p>
+        <div style={{
+          display: 'flex',
+          gap: '1rem',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}>
+          <Link
+            href="/login"
+            style={{
+              padding: '0.75rem 2rem',
+              backgroundColor: colors.mediumBrown,
+              color: colors.white,
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              textDecoration: 'none',
+              display: 'inline-block',
+            }}
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/register"
+            style={{
+              padding: '0.75rem 2rem',
+              backgroundColor: colors.lightBrown,
+              color: colors.textPrimary,
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              textDecoration: 'none',
+              display: 'inline-block',
+            }}
+          >
+            Get Started
+          </Link>
+        </div>
+      </div>
     </main>
   );
 }

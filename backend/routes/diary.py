@@ -110,6 +110,7 @@ async def get_all_diary_entries(
             "updated_at": entry.updated_at,
             "book": {
                 "id": book.id,
+                "open_library_id": book.open_library_id,
                 "title": book.title,
                 "author": book.author,
                 "cover_image_url": book.cover_image_url
