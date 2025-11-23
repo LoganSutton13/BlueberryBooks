@@ -39,12 +39,14 @@ git push origin main
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
 2. Click **Add New** → **Project**
 3. Import your Git repository
-4. Configure the project:
+4. **IMPORTANT**: Configure the project:
    - **Framework Preset**: Next.js (for frontend)
-   - **Root Directory**: Leave empty (or set to project root)
+   - **Root Directory**: Set to `frontend` (this is critical!)
    - **Build Command**: Leave default (Next.js auto-detects)
    - **Output Directory**: Leave default
 5. Click **Deploy** (we'll add environment variables after)
+
+**Note**: If you already deployed and got an error, go to **Settings** → **General** → **Root Directory** and change it to `frontend`, then redeploy.
 
 ### Option B: Deploy via Vercel CLI
 
