@@ -14,9 +14,15 @@
 ```bash
 cd frontend
 npm install
+
+# Create .env.local file
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000/api" > .env.local
+
 npm run dev
 ```
 The frontend will be available at `http://localhost:3000`
+
+**Note**: Make sure your backend is running on port 8000, or update the `NEXT_PUBLIC_API_URL` in `.env.local` accordingly.
 
 #### Backend Setup
 ```bash
@@ -33,7 +39,9 @@ pip install -r requirements.txt
 ```
 
 #### Database Setup (Local)
-For local development, you can use a local PostgreSQL database or SQLite (modify `database.py` for SQLite).
+The app uses **SQLite by default** for local development (no setup required!). The database file will be automatically created at `backend/blueberrybooks.db` when you first run the app.
+
+To use PostgreSQL locally instead:
 
 1. Create a `.env` file in the `backend` directory:
 ```
@@ -52,8 +60,10 @@ python -m models.init_db
 uvicorn api.index:app --reload --port 8000
 ```
 
-The API will be available at `http://localhost:8000`
-API documentation at `http://localhost:8000/docs`
+The API will be available at `http://localhost:8000/api`
+API documentation at `http://localhost:8000/api/docs`
+
+**Note**: The API automatically adds `/api` prefix when running locally. This is handled automatically - no configuration needed!
 
 ### 3. Vercel Deployment
 
@@ -102,8 +112,10 @@ BlueberryBooks/
 
 ## API Base URL
 
-- **Local**: `http://localhost:8000/api`
-- **Production**: `https://your-domain.vercel.app/api`
+- **Local**: `http://localhost:8000/api` (automatically prefixed by FastAPI)
+- **Production**: `https://your-domain.vercel.app/api` (handled by Vercel routing)
+
+**Important**: The backend automatically detects if it's running locally or on Vercel and handles the `/api` prefix accordingly. No manual configuration needed!
 
 ## Testing the API
 
@@ -128,15 +140,19 @@ curl "http://localhost:8000/api/books/search?q=harry+potter&limit=5"
 
 ## Next Steps
 
-1. **Frontend Development**: Build the React Native Web pages
-   - Authentication pages (login/register)
-   - Book search page
-   - Book detail page
-   - User dashboard
+1. **Testing**: Test all features
+   - Register and login
+   - Search for books
+   - Rate books and write diary entries
+   - View dashboard
 
-2. **Testing**: Add unit tests and integration tests
+2. **Deployment**: Deploy to Vercel (see Vercel Deployment section)
 
-3. **XP System**: Implement the progression system (to be defined)
+3. **Future Enhancements**:
+   - Add unit tests and integration tests
+   - Implement XP/progression system (to be defined)
+   - Add image optimization
+   - Add loading states and error boundaries
 
 ## Troubleshooting
 
@@ -153,6 +169,16 @@ curl "http://localhost:8000/api/books/search?q=harry+potter&limit=5"
 ### CORS Issues
 - Update `allow_origins` in `backend/api/index.py` with your frontend URL
 - For production, replace `["*"]` with your actual domain
+
+### API 404 Errors
+- Make sure the backend is running on port 8000
+- Check that `NEXT_PUBLIC_API_URL` in frontend `.env.local` matches your backend URL
+- The API automatically adds `/api` prefix locally - routes should be `/api/auth/register`, etc.
+
+### Database Issues
+- SQLite is used by default for local development (no setup needed)
+- If using PostgreSQL locally, ensure it's running and the connection string is correct
+- For Vercel, make sure the `DATABASE_URL` environment variable is set correctly
 
 ## Support
 

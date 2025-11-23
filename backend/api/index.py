@@ -10,6 +10,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from routes import auth, books, diary, ratings
 
+# Check if we're running locally (for local dev, we need /api prefix)
+# In Vercel, the /api prefix is handled by routing, so we don't add it here
+IS_LOCAL = os.getenv("VERCEL") is None
+API_PREFIX = "/api" if IS_LOCAL else ""
+
 app = FastAPI(
     title="BlueberryBooks API",
     description="API for BlueberryBooks - A book diary application",
@@ -25,11 +30,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(auth.router)
-app.include_router(books.router)
-app.include_router(diary.router)
-app.include_router(ratings.router)
+# Include routers with optional /api prefix for local development
+app.include_router(auth.router, prefix=API_PREFIX)
+app.include_router(books.router, prefix=API_PREFIX)
+app.include_router(diary.router, prefix=API_PREFIX)
+app.include_router(ratings.router, prefix=API_PREFIX)
 
 
 @app.get("/")

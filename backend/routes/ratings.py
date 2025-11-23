@@ -68,7 +68,24 @@ async def create_or_update_rating(
         existing_rating.rating = rating_data.rating
         db.commit()
         db.refresh(existing_rating)
-        return existing_rating
+        
+        # Return as dict with book info
+        rating_dict = {
+            "id": existing_rating.id,
+            "user_id": existing_rating.user_id,
+            "book_id": existing_rating.book_id,
+            "rating": existing_rating.rating,
+            "created_at": existing_rating.created_at,
+            "updated_at": existing_rating.updated_at,
+            "book": {
+                "id": book.id,
+                "open_library_id": book.open_library_id,
+                "title": book.title,
+                "author": book.author,
+                "cover_image_url": book.cover_image_url
+            } if book else None
+        }
+        return rating_dict
     
     # Create new rating
     new_rating = Rating(
@@ -80,7 +97,23 @@ async def create_or_update_rating(
     db.commit()
     db.refresh(new_rating)
     
-    return new_rating
+    # Return as dict with book info
+    rating_dict = {
+        "id": new_rating.id,
+        "user_id": new_rating.user_id,
+        "book_id": new_rating.book_id,
+        "rating": new_rating.rating,
+        "created_at": new_rating.created_at,
+        "updated_at": new_rating.updated_at,
+        "book": {
+            "id": book.id,
+            "open_library_id": book.open_library_id,
+            "title": book.title,
+            "author": book.author,
+            "cover_image_url": book.cover_image_url
+        } if book else None
+    }
+    return rating_dict
 
 
 @router.get("", response_model=List[RatingResponse])

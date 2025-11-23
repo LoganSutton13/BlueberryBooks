@@ -78,7 +78,23 @@ async def create_diary_entry(
     db.commit()
     db.refresh(new_entry)
     
-    return new_entry
+    # Return as dict with book info
+    entry_dict = {
+        "id": new_entry.id,
+        "user_id": new_entry.user_id,
+        "book_id": new_entry.book_id,
+        "entry_text": new_entry.entry_text,
+        "created_at": new_entry.created_at,
+        "updated_at": new_entry.updated_at,
+        "book": {
+            "id": book.id,
+            "open_library_id": book.open_library_id,
+            "title": book.title,
+            "author": book.author,
+            "cover_image_url": book.cover_image_url
+        } if book else None
+    }
+    return entry_dict
 
 
 @router.get("", response_model=List[DiaryEntryResponse])
@@ -152,6 +168,7 @@ async def get_diary_entry_for_book(
         "updated_at": entry.updated_at,
         "book": {
             "id": book.id,
+            "open_library_id": book.open_library_id,
             "title": book.title,
             "author": book.author,
             "cover_image_url": book.cover_image_url
@@ -187,7 +204,26 @@ async def update_diary_entry(
     db.commit()
     db.refresh(entry)
     
-    return entry
+    # Get book info
+    book = db.query(Book).filter(Book.id == entry.book_id).first()
+    
+    # Return as dict with book info
+    entry_dict = {
+        "id": entry.id,
+        "user_id": entry.user_id,
+        "book_id": entry.book_id,
+        "entry_text": entry.entry_text,
+        "created_at": entry.created_at,
+        "updated_at": entry.updated_at,
+        "book": {
+            "id": book.id,
+            "open_library_id": book.open_library_id,
+            "title": book.title,
+            "author": book.author,
+            "cover_image_url": book.cover_image_url
+        } if book else None
+    }
+    return entry_dict
 
 
 @router.delete("/{entry_id}")
