@@ -18,16 +18,19 @@ git commit -m "Ready for deployment"
 git push origin main
 ```
 
-## Step 2: Create Vercel Postgres Database
+## Step 2: Create Database
 
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
 2. Click on **Storage** in the left sidebar
 3. Click **Create Database**
-4. Select **Postgres**
-5. Choose a name (e.g., `blueberrybooks-db`)
-6. Select a region closest to your users
-7. Click **Create**
-8. **Important**: Copy the connection string - you'll need it in the next step
+4. Select **Neon** (Serverless Postgres) - This is the recommended option for PostgreSQL
+   - Alternative options: **Supabase** or **Prisma Postgres** also work
+5. If prompted, sign in/up for Neon (it's free tier is generous)
+6. Choose a name (e.g., `blueberrybooks-db`)
+7. Select a region closest to your users
+8. Click **Create**
+9. **Important**: Copy the connection string - you'll need it in the next step
+   - It will look like: `postgresql://user:password@host.neon.tech/dbname`
 
 ## Step 3: Deploy to Vercel
 
@@ -71,7 +74,7 @@ After the initial deployment, configure environment variables:
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `DATABASE_URL` | `postgresql://...` | Your Vercel Postgres connection string |
+| `DATABASE_URL` | `postgresql://...` | Your Neon/Supabase/Prisma Postgres connection string |
 | `SECRET_KEY` | `your-secret-key` | Generate with: `openssl rand -hex 32` |
 | `NEXT_PUBLIC_API_URL` | `https://your-project.vercel.app/api` | Your Vercel deployment URL + `/api` |
 
@@ -171,8 +174,9 @@ git push
 ### Database Connection Errors
 
 - Verify `DATABASE_URL` is set correctly
-- Check that Vercel Postgres database is created and active
+- Check that your Neon/Supabase/Prisma database is created and active
 - Ensure database tables are initialized
+- For Neon: Check your Neon dashboard to ensure the database is running
 
 ### API 404 Errors
 

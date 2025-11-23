@@ -9,9 +9,10 @@
 
 ## Deployment Steps
 
-### 1. Create Vercel Postgres Database
+### 1. Create Database
 ```
-Vercel Dashboard → Storage → Create Database → Postgres
+Vercel Dashboard → Storage → Create Database → Neon (Serverless Postgres)
+(Or Supabase/Prisma Postgres as alternatives)
 Copy the connection string!
 ```
 
@@ -25,8 +26,8 @@ In Vercel project settings, add:
 
 **DATABASE_URL**
 ```
-postgresql://user:password@host:port/database
-(From Vercel Postgres connection string)
+postgresql://user:password@host.neon.tech/database
+(From Neon/Supabase/Prisma connection string)
 ```
 
 **SECRET_KEY**

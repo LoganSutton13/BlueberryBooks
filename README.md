@@ -12,7 +12,7 @@ BlueberryBooks is a mobile-first book diary application that allows users to tra
 - **Backend**: FastAPI (Python) with Vercel Serverless Functions
 - **Database**: 
   - Local Development: SQLite (default, zero setup)
-  - Production: Vercel Postgres (PostgreSQL)
+  - Production: Neon/Supabase/Prisma Postgres (via Vercel Storage integration)
 - **Book API**: Open Library API (free, no API key required)
 - **Authentication**: Password hashing with bcrypt, JWT tokens
 - **Hosting**: Vercel (frontend and backend)
@@ -276,8 +276,8 @@ python -m models.init_db
 ```
 
 #### Production (Vercel)
-1. Create a Vercel Postgres database in your Vercel project
-2. Set the `DATABASE_URL` environment variable in Vercel
+1. Create a database via Vercel Storage (Neon, Supabase, or Prisma Postgres recommended)
+2. Set the `DATABASE_URL` environment variable in Vercel with the connection string
 3. Initialize the database using Vercel CLI or manually run migrations
 
 ### Environment Variables
