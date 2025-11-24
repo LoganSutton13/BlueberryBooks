@@ -1,0 +1,45 @@
+# Ignore files that shouldn't be deployed to Vercel
+
+# Local database
+backend/blueberrybooks.db
+backend/*.db
+
+# Python cache
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+
+# Virtual environments
+backend/venv/
+backend/env/
+backend/.venv/
+
+# Environment files (use Vercel env vars instead)
+backend/.env
+backend/.env.local
+frontend/.env.local
+frontend/.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+backend/*.log
+
+# Testing
+backend/.pytest_cache/
+backend/htmlcov/
+backend/.coverage
+
+# Node modules (handled by Vercel)
+frontend/node_modules/
+frontend/.next/
+
+# Build artifacts
+frontend/out/
+frontend/build/
+
