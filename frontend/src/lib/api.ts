@@ -208,6 +208,7 @@ export interface DiaryEntry {
 export interface DiaryEntryWithBook extends DiaryEntry {
   book?: {
     id: number;
+    open_library_id?: string;
     title: string;
     author?: string;
     cover_image_url?: string;
@@ -226,6 +227,7 @@ export interface Rating {
 export interface RatingWithBook extends Rating {
   book?: {
     id: number;
+    open_library_id?: string;
     title: string;
     author?: string;
     cover_image_url?: string;
