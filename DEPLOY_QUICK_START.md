@@ -17,13 +17,24 @@ Vercel Dashboard → Add New → Project → Import Git Repo
 **CRITICAL**: Set **Root Directory** to: `frontend`
 
 ### 4. Set Environment Variables
-In Vercel project settings:
+In Vercel project settings → Environment Variables:
 
-| Variable | Value |
-|----------|-------|
-| `DATABASE_URL` | Your Neon connection string |
-| `SECRET_KEY` | Generate: `openssl rand -hex 32` |
-| `NEXT_PUBLIC_API_URL` | `https://your-project.vercel.app/api` |
+**DATABASE_URL**
+- Get from: Vercel Dashboard → Storage → Your Neon DB → Connection String
+- Example: `postgresql://user:pass@ep-xxx.neon.tech/db`
+- Select: Production, Preview, Development
+
+**SECRET_KEY**
+- Generate: `openssl rand -hex 32` (or use https://generate-secret.vercel.app/32)
+- Example: `a1b2c3d4e5f6...` (64 character hex string)
+- Select: Production, Preview, Development
+
+**NEXT_PUBLIC_API_URL**
+- Value: `https://your-project-name.vercel.app/api`
+- Replace `your-project-name` with your actual Vercel project name
+- Select: Production, Preview, Development
+
+📖 **Detailed guide**: See [ENV_VARIABLES_GUIDE.md](./ENV_VARIABLES_GUIDE.md) for step-by-step instructions
 
 ### 5. Deploy
 Click **Deploy** and wait for build to complete.
