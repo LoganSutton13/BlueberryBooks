@@ -53,7 +53,19 @@ In the frontend project settings → **Environment Variables**, add:
 
 ## Step 3: Initialize Database
 
-After both projects are deployed:
+After both projects are deployed, you need to create the database tables. The initialization script will:
+- Create 5 tables: `users`, `books`, `diary_entries`, `ratings`, `read_books`
+- Set up foreign keys and relationships between tables
+- Add indexes for performance
+- Apply constraints (unique usernames, one rating per user per book, etc.)
+
+**How it works:**
+- The script runs **locally on your computer**
+- But it connects to your **remote Vercel-hosted PostgreSQL database**
+- The `vercel env pull` command downloads the `DATABASE_URL` which contains the connection string to your Vercel database
+- When you run `python -m models.init_db`, it uses that connection string to create tables in the remote database
+
+**Note**: You only need to run this **once** after the first deployment. The tables will persist in your database.
 
 ```bash
 # Install Vercel CLI if needed
@@ -64,11 +76,21 @@ cd backend
 vercel link
 # Select your backend project when prompted
 
-# Pull environment variables
+# Pull environment variables from Vercel (creates .env.local file)
+# This downloads DATABASE_URL and SECRET_KEY from your Vercel backend project
 vercel env pull .env.local
 
-# Initialize database
+# Verify .env.local was created and contains DATABASE_URL
+# You should see a file at: backend/.env.local (or root/.env.local)
+
+# Initialize database (creates all required tables in your Vercel database)
+# NOTE: This script runs on YOUR computer but connects to the REMOTE Vercel database
+# The DATABASE_URL in .env.local points to your Vercel-hosted PostgreSQL database
+# This creates: users, books, diary_entries, ratings, read_books tables
+cd backend
 python -m models.init_db
+
+# You should see: "✅ Database tables created successfully!"
 ```
 
 ## Step 4: Verify Deployment
@@ -117,10 +139,17 @@ BlueberryBooks/
 - ✅ Check backend project is deployed and accessible
 - ✅ Test backend directly: `https://your-backend.vercel.app/health`
 
-### Database errors
+### Database errors / No tables in database
 - ✅ Verify `DATABASE_URL` is set in **backend project** only
 - ✅ Run database initialization script
 - ✅ Check database is active in Vercel Storage
+- ✅ **If no tables exist:**
+  1. Make sure you ran `vercel env pull .env.local` from the `backend` directory
+  2. Verify `.env.local` file exists and contains `DATABASE_URL`
+  3. Check that `DATABASE_URL` points to your Vercel database (should start with `postgresql://`)
+  4. Run `python -m models.init_db` from the `backend` directory
+  5. You should see "✅ Database tables created successfully!"
+  6. If you get Python 3.13 errors, upgrade SQLAlchemy: `pip install --upgrade sqlalchemy`
 
 ## Benefits of Two Projects
 
