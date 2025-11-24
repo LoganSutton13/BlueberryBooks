@@ -4,28 +4,18 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config) => {
-    // Get existing aliases
-    const existingAliases = config.resolve.alias || {};
-    
-    // Resolve src path - __dirname is the directory containing next.config.js
-    // When Root Directory is 'frontend', __dirname should be the frontend directory
+    // Configure alias to match tsconfig.json paths
+    // tsconfig.json has: "@/*": ["./src/*"] with baseUrl: "."
+    // __dirname is always the directory containing this config file (frontend/)
     const srcPath = path.resolve(__dirname, 'src');
     
-    // Set up aliases - explicitly set @ to point to src directory
-    // This ensures webpack can resolve @/lib/api to src/lib/api
+    // Ensure the alias is configured correctly
+    // This makes @/lib/api resolve to src/lib/api
     config.resolve.alias = {
-      ...existingAliases,
+      ...config.resolve.alias,
       '@': srcPath,
-      'react-native$': 'react-native-web',
     };
     
-    config.resolve.extensions = [
-      '.web.js',
-      '.web.jsx',
-      '.web.ts',
-      '.web.tsx',
-      ...config.resolve.extensions,
-    ];
     return config;
   },
   // PWA configuration
