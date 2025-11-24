@@ -143,8 +143,24 @@ BlueberryBooks/
 │   └── blueberrybooks.db # SQLite database (local dev)
 ├── vercel.json           # Vercel configuration
 ├── README.md
-└── SETUP.md             # Detailed setup guide
+└── docs/                 # Documentation
+    ├── SETUP.md          # Detailed setup guide
+    ├── DEPLOYMENT.md      # Deployment instructions
+    ├── DEPLOY_QUICK_START.md # Quick deployment guide
+    └── ...                # Other documentation files
 ```
+
+## Documentation
+
+All detailed documentation is available in the [`docs/`](./docs/) folder:
+
+- **[Setup Guide](./docs/SETUP.md)** - Complete local development setup
+- **[Deployment Guide](./docs/DEPLOYMENT.md)** - Comprehensive Vercel deployment
+- **[Quick Deploy](./docs/DEPLOY_QUICK_START.md)** - 5-minute deployment guide
+- **[Environment Variables](./docs/ENV_VARIABLES_GUIDE.md)** - Detailed env var setup
+- **[Troubleshooting](./docs/VERCEL_BUILD_FIX.md)** - Build and deployment fixes
+
+See [docs/README.md](./docs/README.md) for the complete documentation index.
 
 ## API Endpoints
 
