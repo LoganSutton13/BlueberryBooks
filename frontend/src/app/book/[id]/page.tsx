@@ -302,7 +302,7 @@ function BookDetailContent() {
               Published: {displayBook.published_year}
             </p>
           )}
-          {displayBook.description && (
+          {'description' in displayBook && displayBook.description && (
             <p style={{
               color: colors.textSecondary,
               lineHeight: '1.6',
