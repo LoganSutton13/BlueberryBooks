@@ -14,9 +14,12 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# Only ignore lib/ in Python package contexts, not frontend source code
+/lib/
 lib64/
 parts/
+# Allow frontend/src/lib/ (source code)
+!frontend/src/lib/
 sdist/
 var/
 wheels/
