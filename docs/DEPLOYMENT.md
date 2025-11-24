@@ -43,6 +43,20 @@ git push origin main
    - **Output Directory**: Leave default
 5. Click **Deploy** (we'll add environment variables after)
 
+### Configure Production Branch (After Initial Deployment)
+
+To set `main` as your production branch:
+
+1. Go to your project in **Vercel Dashboard**
+2. Click **Settings** → **Git**
+3. Under **Production Branch**, select or enter: `main`
+4. Click **Save**
+
+This ensures that:
+- Pushes to `main` automatically trigger production deployments
+- Other branches create preview deployments
+- Production deployments use the `main` branch
+
 ### Option B: Deploy via Vercel CLI
 
 ```bash
