@@ -4,12 +4,21 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config) => {
-    // Preserve existing aliases and explicitly add @/* alias
+    // Get existing aliases
+    const existingAliases = config.resolve.alias || {};
+    
+    // Resolve src path - __dirname is the directory containing next.config.js
+    // When Root Directory is 'frontend', __dirname should be the frontend directory
+    const srcPath = path.resolve(__dirname, 'src');
+    
+    // Set up aliases - explicitly set @ to point to src directory
+    // This ensures webpack can resolve @/lib/api to src/lib/api
     config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      '@': path.resolve(__dirname, './src'),
+      ...existingAliases,
+      '@': srcPath,
       'react-native$': 'react-native-web',
     };
+    
     config.resolve.extensions = [
       '.web.js',
       '.web.jsx',
