@@ -285,6 +285,7 @@ export interface UserProfile {
   is_private: boolean;
   followers_count: number;
   following_count: number;
+  books_read_count: number;
   is_following: boolean;
   is_friend: boolean;
   can_view: boolean;

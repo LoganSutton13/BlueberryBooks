@@ -151,6 +151,12 @@ function ProfileContent() {
         }}>
           <div>
             <span style={{ fontWeight: '600', color: colors.textPrimary }}>
+              {profile.books_read_count}
+            </span>
+            <span style={{ marginLeft: '0.5rem' }}>Books Read</span>
+          </div>
+          <div>
+            <span style={{ fontWeight: '600', color: colors.textPrimary }}>
               {profile.followers_count}
             </span>
             <span style={{ marginLeft: '0.5rem' }}>Followers</span>

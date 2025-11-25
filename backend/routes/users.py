@@ -11,7 +11,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models.database import get_db
-from models.models import User, Follow, Rating, DiaryEntry, Book
+from models.models import User, Follow, Rating, DiaryEntry, Book, ReadBook
 from routes.auth import get_current_user
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -32,6 +32,7 @@ class UserProfileResponse(BaseModel):
     is_private: bool
     followers_count: int
     following_count: int
+    books_read_count: int
     is_following: bool
     is_friend: bool
     can_view: bool
@@ -105,12 +106,16 @@ async def get_own_profile(
     followers_count = db.query(Follow).filter(Follow.followed_id == current_user.id).count()
     following_count = db.query(Follow).filter(Follow.follower_id == current_user.id).count()
     
+    # Get books read count
+    books_read_count = db.query(ReadBook).filter(ReadBook.user_id == current_user.id).count()
+    
     return {
         "id": current_user.id,
         "username": current_user.username,
         "is_private": bool(current_user.is_private),
         "followers_count": followers_count,
         "following_count": following_count,
+        "books_read_count": books_read_count,
         "is_following": False,
         "is_friend": False,
         "can_view": True
@@ -182,6 +187,9 @@ async def get_user_profile(
     followers_count = db.query(Follow).filter(Follow.followed_id == user_id).count()
     following_count = db.query(Follow).filter(Follow.follower_id == user_id).count()
     
+    # Get books read count (always visible if can_view)
+    books_read_count = db.query(ReadBook).filter(ReadBook.user_id == user_id).count() if can_view else 0
+    
     # Get top 10 rated books with reviews if can_view
     top_rated_books = []
     if can_view:
@@ -217,6 +225,7 @@ async def get_user_profile(
         "is_private": bool(target_user.is_private),
         "followers_count": followers_count,
         "following_count": following_count,
+        "books_read_count": books_read_count,
         "is_following": is_following,
         "is_friend": is_friend,
         "can_view": can_view,

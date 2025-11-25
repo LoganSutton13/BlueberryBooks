@@ -105,7 +105,7 @@ function DashboardContent() {
             fontWeight: activeTab === 'ratings' ? '600' : '400',
           }}
         >
-          Top Rated ({topRatings.length})
+          Top Rated
         </button>
         <button
           onClick={() => setActiveTab('diary')}
@@ -120,7 +120,7 @@ function DashboardContent() {
             fontWeight: activeTab === 'diary' ? '600' : '400',
           }}
         >
-          Diary Entries ({diaryEntries.length})
+          Diary Entries
         </button>
       </div>
 
