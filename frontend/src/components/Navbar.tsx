@@ -47,12 +47,36 @@ export function Navbar() {
         }}>
           Search Books
         </Link>
+        <Link href="/users/search" style={{
+          color: colors.textPrimary,
+          textDecoration: 'none',
+          fontSize: '1rem',
+        }}>
+          Find Users
+        </Link>
         <Link href="/dashboard" style={{
           color: colors.textPrimary,
           textDecoration: 'none',
           fontSize: '1rem',
         }}>
           Dashboard
+        </Link>
+        <Link href="/profile" style={{
+          color: colors.textPrimary,
+          textDecoration: 'none',
+          fontSize: '1.2rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          border: `1px solid ${colors.border}`,
+          backgroundColor: colors.backgroundSecondary,
+        }}
+        title="Profile Settings"
+        >
+          👤
         </Link>
         <span style={{
           color: colors.textSecondary,

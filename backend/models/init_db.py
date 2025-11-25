@@ -19,7 +19,7 @@ possible_paths = [
 for env_path in possible_paths:
     if env_path.exists():
         load_dotenv(env_path)
-        print(f"✅ Loaded environment variables from {env_path}")
+        print(f"Loaded environment variables from {env_path}")
         env_loaded = True
         break
 
@@ -30,34 +30,27 @@ if not env_loaded:
         print(f"   - {path} {'(exists)' if path.exists() else '(not found)'}")
 
 from .database import engine, Base
-from .models import User, Book, DiaryEntry, Rating, ReadBook
+from .models import User, Book, DiaryEntry, Rating, ReadBook, Follow
 
 
 def init_db():
     """Initialize database tables"""
-    # Verify DATABASE_URL is set
-    database_url = os.getenv("DATABASE_URL", "")
-    if not database_url:
-        print("❌ ERROR: DATABASE_URL environment variable is not set!")
-        print("\nTroubleshooting steps:")
-        print("1. Make sure you're in the backend directory")
-        print("2. Run: vercel link (if not already linked)")
-        print("3. Run: vercel env pull .env.local")
-        print("4. Verify .env.local exists in backend/ directory")
-        print("5. Check that .env.local contains: DATABASE_URL=postgresql://...")
-        print("\nCurrent working directory:", os.getcwd())
-        return
+    # Use the same logic as database.py to determine which database to use
+    from .database import DATABASE_URL, engine
     
-    if database_url.startswith("sqlite"):
-        print("WARNING: Using SQLite database. Make sure DATABASE_URL points to your Vercel PostgreSQL database.")
+    if DATABASE_URL.startswith("sqlite"):
+        print("Using SQLite database for local development")
+        print(f"Database file: blueberrybooks.db")
     else:
-        print(f"Connecting to database: {database_url.split('@')[1] if '@' in database_url else 'database'}")
+        # Mask password in connection string for display
+        display_url = DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else 'database'
+        print(f"Connecting to PostgreSQL database: {display_url}")
     
     try:
         Base.metadata.create_all(bind=engine)
-        print("✅ Database tables created successfully!")
+        print("SUCCESS: Database tables created successfully!")
     except Exception as e:
-        print(f"❌ Error creating database tables: {e}")
+        print(f"ERROR: Error creating database tables: {e}")
         raise
 
 

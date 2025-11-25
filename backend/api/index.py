@@ -8,7 +8,7 @@ import os
 # Add parent directory to path to import routes
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from routes import auth, books, diary, ratings
+from routes import auth, books, diary, ratings, users
 
 # Check if we're running locally (for local dev, we need /api prefix)
 # In Vercel, the /api prefix is handled by routing, so we don't add it here
@@ -35,6 +35,7 @@ app.include_router(auth.router, prefix=API_PREFIX)
 app.include_router(books.router, prefix=API_PREFIX)
 app.include_router(diary.router, prefix=API_PREFIX)
 app.include_router(ratings.router, prefix=API_PREFIX)
+app.include_router(users.router, prefix=API_PREFIX)
 
 
 @app.get("/")

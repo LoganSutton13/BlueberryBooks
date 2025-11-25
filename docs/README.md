@@ -20,6 +20,7 @@ Welcome to the BlueberryBooks documentation! Here you'll find guides for setup, 
 
 ### Development
 - **[FRONTEND_SUMMARY.md](./FRONTEND_SUMMARY.md)** - Frontend implementation details
+- **[SOCIAL_FEATURES.md](./SOCIAL_FEATURES.md)** - Social features documentation (user profiles, follow system, privacy)
 
 ### Quick Reference
 - **[QUICK_DEPLOY.md](./QUICK_DEPLOY.md)** - Quick deployment reference
@@ -30,8 +31,10 @@ Welcome to the BlueberryBooks documentation! Here you'll find guides for setup, 
 - **Ready to deploy?** Use [DEPLOY_QUICK_START.md](./DEPLOY_QUICK_START.md)
 - **Having build issues?** Check [VERCEL_BUILD_FIX.md](./VERCEL_BUILD_FIX.md)
 - **Need help with env vars?** See [ENV_VARIABLES_GUIDE.md](./ENV_VARIABLES_GUIDE.md)
+- **Using social features?** See [SOCIAL_FEATURES.md](./SOCIAL_FEATURES.md)
 
 ## 📖 Main Documentation
 
 For project overview, features, and API documentation, see the main [README.md](../README.md) in the project root.
+
 

@@ -41,11 +41,18 @@ pip install -r requirements.txt
 #### Database Setup (Local)
 The app uses **SQLite by default** for local development (no setup required!). The database file will be automatically created at `backend/blueberrybooks.db` when you first run the app.
 
-To use PostgreSQL locally instead:
-
-1. Create a `.env` file in the `backend` directory:
+**Recommended:** Create a `.env.local` file in the `backend` directory:
+```env
+DEV_DATABASE_URL=sqlite:///./blueberrybooks.db
+SECRET_KEY=your-secret-key-here-change-in-production
 ```
-DATABASE_URL=postgresql://user:password@localhost/blueberrybooks
+
+**Note:** If `DEV_DATABASE_URL` is not set, it defaults to SQLite. The app automatically detects local development vs production and uses the appropriate database.
+
+To use PostgreSQL locally instead:
+1. Set `DEV_DATABASE_URL` to your local PostgreSQL connection string:
+```env
+DEV_DATABASE_URL=postgresql://user:password@localhost/blueberrybooks
 SECRET_KEY=your-secret-key-here-change-in-production
 ```
 
@@ -53,6 +60,11 @@ SECRET_KEY=your-secret-key-here-change-in-production
 ```bash
 cd backend
 python -m models.init_db
+```
+
+3. Run the social features migration (if using an existing database):
+```bash
+python -m models.migrate_social_features
 ```
 
 3. Run the FastAPI server:

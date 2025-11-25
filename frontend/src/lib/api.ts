@@ -173,6 +173,45 @@ class ApiClient {
       { method: 'DELETE' }
     );
   }
+
+  // Users
+  async searchUsers(query: string) {
+    return this.request<{ results: UserSearchResult[] }>(
+      `/users/search?q=${encodeURIComponent(query)}`
+    );
+  }
+
+  async getUserProfile(userId: number) {
+    return this.request<UserProfileWithBooks>(`/users/${userId}/profile`);
+  }
+
+  async getOwnProfile() {
+    return this.request<UserProfile>(`/users/me/profile`);
+  }
+
+  async followUser(userId: number) {
+    return this.request<{ message: string }>(
+      `/users/${userId}/follow`,
+      { method: 'POST' }
+    );
+  }
+
+  async unfollowUser(userId: number) {
+    return this.request<{ message: string }>(
+      `/users/${userId}/follow`,
+      { method: 'DELETE' }
+    );
+  }
+
+  async updatePrivacy(isPrivate: boolean) {
+    return this.request<{ message: string; is_private: boolean }>(
+      '/users/me/privacy',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ is_private: isPrivate }),
+      }
+    );
+  }
 }
 
 // Type definitions
@@ -232,6 +271,38 @@ export interface RatingWithBook extends Rating {
     author?: string;
     cover_image_url?: string;
   };
+}
+
+export interface UserSearchResult {
+  id: number;
+  username: string;
+  is_private: boolean;
+}
+
+export interface UserProfile {
+  id: number;
+  username: string;
+  is_private: boolean;
+  followers_count: number;
+  following_count: number;
+  books_read_count: number;
+  is_following: boolean;
+  is_friend: boolean;
+  can_view: boolean;
+}
+
+export interface TopRatedBook {
+  book_id: number;
+  open_library_id?: string;
+  title: string;
+  author?: string;
+  cover_image_url?: string;
+  rating: number;
+  review?: string;
+}
+
+export interface UserProfileWithBooks extends UserProfile {
+  top_rated_books: TopRatedBook[];
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

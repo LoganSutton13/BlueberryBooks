@@ -12,6 +12,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
+    is_private = Column(Integer, default=0, nullable=False)  # 0 = public, 1 = private
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -19,6 +20,8 @@ class User(Base):
     diary_entries = relationship("DiaryEntry", back_populates="user", cascade="all, delete-orphan")
     ratings = relationship("Rating", back_populates="user", cascade="all, delete-orphan")
     read_books = relationship("ReadBook", back_populates="user", cascade="all, delete-orphan")
+    following = relationship("Follow", foreign_keys="Follow.follower_id", back_populates="follower", cascade="all, delete-orphan")
+    followers = relationship("Follow", foreign_keys="Follow.followed_id", back_populates="followed", cascade="all, delete-orphan")
 
 
 class Book(Base):
@@ -94,5 +97,24 @@ class ReadBook(Base):
     # Unique constraint: one record per user per book
     __table_args__ = (
         UniqueConstraint('user_id', 'book_id', name='unique_user_book_read'),
+    )
+
+
+class Follow(Base):
+    """Follow model - tracks user following relationships"""
+    __tablename__ = "follows"
+
+    id = Column(Integer, primary_key=True, index=True)
+    follower_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    followed_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    follower = relationship("User", foreign_keys=[follower_id], back_populates="following")
+    followed = relationship("User", foreign_keys=[followed_id], back_populates="followers")
+
+    # Unique constraint: one follow relationship per user pair
+    __table_args__ = (
+        UniqueConstraint('follower_id', 'followed_id', name='unique_follow_relationship'),
     )
 

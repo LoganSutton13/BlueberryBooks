@@ -2,7 +2,10 @@
 
 ## Overview
 
-You need to set **3 environment variables** in Vercel for your app to work properly.
+You need to set **3 environment variables** in Vercel for production, and **2 environment variables** for local development.
+
+**Production (Vercel):** `DATABASE_URL`, `SECRET_KEY`, `NEXT_PUBLIC_API_URL`  
+**Local Development:** `DEV_DATABASE_URL`, `SECRET_KEY`
 
 ## Step-by-Step: Setting Environment Variables
 
@@ -118,7 +121,58 @@ https://blueberrybooks.com/api
 
 ---
 
+## Local Development Environment Variables
+
+For local development, create a `.env.local` file in the `backend/` directory:
+
+### Variable 1: `DEV_DATABASE_URL` (Local Development)
+
+**What it is:**
+The database connection string for local development. The app automatically uses this when running locally (when `VERCEL` environment variable is not set).
+
+**Recommended value (SQLite):**
+```
+DEV_DATABASE_URL=sqlite:///./blueberrybooks.db
+```
+
+This creates a SQLite database file at `backend/blueberrybooks.db`.
+
+**Alternative (Local PostgreSQL):**
+If you want to use PostgreSQL locally instead:
+```
+DEV_DATABASE_URL=postgresql://user:password@localhost/blueberrybooks
+```
+
+**Note:** If `DEV_DATABASE_URL` is not set, the app defaults to `sqlite:///./blueberrybooks.db`.
+
+### Variable 2: `SECRET_KEY` (Local Development)
+
+Same as production - a secret key for JWT token signing.
+
+**Example `.env.local` file:**
+```env
+DEV_DATABASE_URL=sqlite:///./blueberrybooks.db
+SECRET_KEY=your-secret-key-here-change-in-production
+```
+
+**Location:** `backend/.env.local` (this file is gitignored)
+
+---
+
 ## Quick Reference Table
+
+### Production (Vercel)
+| Variable Name | Where to Get It | Example Value |
+|--------------|----------------|---------------|
+| `DATABASE_URL` | Vercel Storage → Your Neon DB → Connection String | `postgresql://user:pass@ep-xxx.neon.tech/db` |
+| `SECRET_KEY` | Generate with `openssl rand -hex 32` or online | `a1b2c3d4e5f6...` (64 chars) |
+| `NEXT_PUBLIC_API_URL` | Your Vercel deployment URL + `/api` | `https://project.vercel.app/api` |
+
+### Local Development
+| Variable Name | Purpose | Example Value |
+|--------------|---------|---------------|
+| `DEV_DATABASE_URL` | Local database connection | `sqlite:///./blueberrybooks.db` |
+| `SECRET_KEY` | JWT token signing | `a1b2c3d4e5f6...` (64 chars) |
 
 | Variable Name | Where to Get It | Example Value |
 |--------------|----------------|---------------|
@@ -155,10 +209,22 @@ https://blueberrybooks.com/api
 
 ---
 
+## Environment Detection
+
+The app automatically detects the environment:
+
+- **Production (Vercel):** Uses `DATABASE_URL` (PostgreSQL)
+  - Detected by presence of `VERCEL` environment variable (automatically set by Vercel)
+  
+- **Local Development:** Uses `DEV_DATABASE_URL` (defaults to SQLite)
+  - Detected by absence of `VERCEL` environment variable
+  - If `DEV_DATABASE_URL` is not set, defaults to `sqlite:///./blueberrybooks.db`
+
 ## Security Notes
 
-- ✅ `DATABASE_URL` and `SECRET_KEY` are **server-side only** (not exposed to browser)
+- ✅ `DATABASE_URL`, `DEV_DATABASE_URL`, and `SECRET_KEY` are **server-side only** (not exposed to browser)
 - ✅ `NEXT_PUBLIC_API_URL` is **public** (starts with `NEXT_PUBLIC_` so it's safe to expose)
 - ❌ Never commit these values to Git
 - ❌ Never share your `SECRET_KEY` publicly
+- ✅ `.env.local` files are gitignored by default
 
