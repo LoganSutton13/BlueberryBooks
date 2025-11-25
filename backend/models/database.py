@@ -4,14 +4,25 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Get database URL from environment variable
-# Default to SQLite for local development if DATABASE_URL is not set or is the placeholder
-default_db_url = os.getenv("DATABASE_URL", "")
-if not default_db_url or default_db_url == "postgresql://user:password@localhost/dbname":
-    # Use SQLite for local development
-    default_db_url = "sqlite:///./blueberrybooks.db"
+# Determine which database to use based on environment
+# Production (Vercel): Use DATABASE_URL from environment (PostgreSQL)
+# Development (Local): Use DEV_DATABASE_URL if set, otherwise default to SQLite
+is_production = os.getenv("VERCEL") is not None
 
-DATABASE_URL = default_db_url
+if is_production:
+    # In production (Vercel), always use DATABASE_URL (PostgreSQL)
+    database_url = os.getenv("DATABASE_URL", "")
+    if not database_url:
+        raise ValueError("DATABASE_URL must be set in production (Vercel)")
+    DATABASE_URL = database_url
+else:
+    # In local development, use DEV_DATABASE_URL if set, otherwise default to SQLite
+    dev_database_url = os.getenv("DEV_DATABASE_URL", "")
+    if dev_database_url:
+        DATABASE_URL = dev_database_url
+    else:
+        # Default to SQLite for local development
+        DATABASE_URL = "sqlite:///./blueberrybooks.db"
 
 # Create engine
 # For SQLite, we need check_same_thread=False

@@ -42,6 +42,15 @@ BlueberryBooks is a mobile-first book diary application that allows users to tra
 - **Optional Ratings**: Users can mark books as read without rating them
 - **Update Ratings**: Users can update their ratings for books
 
+### Social Features
+- **User Search**: Search for other users by username
+- **User Profiles**: View other users' profiles with their top 10 rated books and reviews
+- **Follow System**: Follow other users to see their profiles and top rated books
+- **Friends**: When two users follow each other, they are marked as friends
+- **Privacy Controls**: Users can set their profile to private (only followers can view)
+- **Profile Settings**: Manage privacy settings from the profile page
+- **Follower/Following Counts**: See how many users follow you and who you're following
+
 ### Progression System
 - **XP System**: Gain experience points as users read and log more books
 - **Leveling System**: Level up reading skills based on activity
@@ -60,6 +69,7 @@ BlueberryBooks is a mobile-first book diary application that allows users to tra
 - `id`: Unique user identifier
 - `username`: Unique username
 - `password_hash`: Hashed password (bcrypt)
+- `is_private`: Privacy setting (0 = public, 1 = private)
 - `created_at`: Account creation timestamp
 - `updated_at`: Last update timestamp
 
@@ -98,6 +108,13 @@ BlueberryBooks is a mobile-first book diary application that allows users to tra
 - `read_at`: Timestamp when marked as read
 - **Unique Constraint**: One record per user per book
 
+### Follows (Social)
+- `id`: Unique follow relationship identifier
+- `follower_id`: Foreign key to Users (user who is following)
+- `followed_id`: Foreign key to Users (user being followed)
+- `created_at`: Timestamp when follow relationship was created
+- **Unique Constraint**: One follow relationship per user pair
+
 ## Project Structure
 
 ```
@@ -110,7 +127,11 @@ BlueberryBooks/
 │   │   │   ├── register/ # Register page
 │   │   │   ├── search/   # Book search page
 │   │   │   ├── dashboard/# User dashboard
-│   │   │   └── book/[id]/# Book detail page
+│   │   │   ├── book/[id]/# Book detail page
+│   │   │   ├── users/    # User social features
+│   │   │   │   ├── search/# User search page
+│   │   │   │   └── [id]/  # User profile page
+│   │   │   └── profile/  # Profile settings page
 │   │   ├── components/   # React components
 │   │   │   ├── StarRating.tsx
 │   │   │   ├── Navbar.tsx
@@ -130,12 +151,14 @@ BlueberryBooks/
 │   ├── models/           # Database models
 │   │   ├── database.py  # DB connection (SQLite/PostgreSQL)
 │   │   ├── models.py    # SQLAlchemy models
-│   │   └── init_db.py   # Database initialization
+│   │   ├── init_db.py   # Database initialization
+│   │   └── migrate_social_features.py # Social features migration
 │   ├── routes/           # API route handlers
 │   │   ├── auth.py      # Authentication routes
 │   │   ├── books.py     # Book routes
 │   │   ├── diary.py     # Diary entry routes
-│   │   └── ratings.py    # Rating routes
+│   │   ├── ratings.py    # Rating routes
+│   │   └── users.py     # User social routes
 │   ├── utils/            # Utility functions
 │   │   ├── auth.py      # Password hashing, JWT
 │   │   └── open_library.py # Open Library API client
@@ -237,6 +260,33 @@ See [docs/README.md](./docs/README.md) for the complete documentation index.
   - Headers: `Authorization: Bearer {token}`
   - Returns: `{ "message": string }`
 
+### Users (Social Features)
+- `GET /api/users/search?q={query}` - Search for users by username
+  - Headers: `Authorization: Bearer {token}`
+  - Returns: `{ "results": [{ "id": int, "username": string, "is_private": bool }] }`
+
+- `GET /api/users/me/profile` - Get current user's own profile
+  - Headers: `Authorization: Bearer {token}`
+  - Returns: UserProfile object with follower/following counts
+
+- `GET /api/users/{user_id}/profile` - Get another user's profile
+  - Headers: `Authorization: Bearer {token}`
+  - Returns: UserProfileWithBooks object (includes top 10 rated books and reviews if accessible)
+  - Respects privacy settings (private profiles only visible to followers)
+
+- `POST /api/users/{user_id}/follow` - Follow a user
+  - Headers: `Authorization: Bearer {token}`
+  - Returns: `{ "message": string }`
+
+- `DELETE /api/users/{user_id}/follow` - Unfollow a user
+  - Headers: `Authorization: Bearer {token}`
+  - Returns: `{ "message": string }`
+
+- `PUT /api/users/me/privacy` - Update privacy setting
+  - Headers: `Authorization: Bearer {token}`
+  - Body: `{ "is_private": bool }`
+  - Returns: `{ "message": string, "is_private": bool }`
+
 ## Setup Instructions
 
 ### Prerequisites
@@ -294,7 +344,13 @@ python -m models.init_db
 #### Production (Vercel)
 1. Create a Vercel Postgres database in your Vercel project
 2. Set the `DATABASE_URL` environment variable in Vercel
-3. Initialize the database using Vercel CLI or manually run migrations
+3. Initialize the database and run migrations:
+   ```bash
+   cd backend
+   vercel env pull .env.local  # Pull environment variables
+   python -m models.init_db    # Create tables
+   python -m models.migrate_social_features  # Add social features
+   ```
 
 ### Environment Variables
 
@@ -305,11 +361,13 @@ NEXT_PUBLIC_API_URL=http://localhost:8000/api
 ```
 
 #### Backend (Local)
-Create `backend/.env`:
+Create `backend/.env.local` or `backend/.env`:
 ```
-DATABASE_URL=sqlite:///./blueberrybooks.db  # Default, or use PostgreSQL
+DEV_DATABASE_URL=sqlite:///./blueberrybooks.db  # SQLite for local development
 SECRET_KEY=your-secret-key-here-change-in-production
 ```
+
+**Note**: The app automatically uses `DEV_DATABASE_URL` for local development and `DATABASE_URL` for production (Vercel). If `DEV_DATABASE_URL` is not set, it defaults to SQLite.
 
 #### Vercel (Production)
 Set these in Vercel project settings:
@@ -337,8 +395,11 @@ Set these in Vercel project settings:
 - Book search and management (Open Library integration)
 - Diary entries CRUD operations
 - Ratings CRUD operations
+- User social features (search, profiles, follow/unfollow, privacy)
 - Database models and schema
-- SQLite support for local development
+- SQLite support for local development (via DEV_DATABASE_URL)
+- PostgreSQL support for production (via DATABASE_URL)
+- Automatic environment detection (local vs Vercel)
 - Automatic API prefix handling (local vs Vercel)
 
 ✅ **Frontend**: Complete
@@ -348,6 +409,10 @@ Set these in Vercel project settings:
 - Book search page with Open Library integration
 - Book detail page (view, rate, diary entry, mark as read)
 - User dashboard (read books, top 10 rated, diary entries)
+- User search page (find other users)
+- User profile pages (view top 10 books and reviews)
+- Profile settings page (privacy controls)
+- Follow/unfollow functionality
 - Star rating component (1-5 stars)
 - Protected routes and authentication context
 - Responsive design
@@ -361,14 +426,17 @@ Set these in Vercel project settings:
 - **Book API**: Open Library API (free, no API key required)
 - **Backend**: FastAPI with automatic API documentation
 - **Database**: 
-  - Local: SQLite (default, no setup required)
-  - Production: Vercel Postgres (PostgreSQL)
+  - Local: SQLite (default via DEV_DATABASE_URL, no setup required)
+  - Production: Vercel Postgres (PostgreSQL via DATABASE_URL)
+  - Automatic environment detection and database selection
 - **Authentication**: Password hashing with bcrypt, JWT tokens
 - **Deployment**: Vercel (serverless functions for both frontend and backend)
 
 ## Key Features
 
-- **Zero-config local development**: SQLite database, automatic API prefix handling
+- **Zero-config local development**: SQLite database (via DEV_DATABASE_URL), automatic API prefix handling
+- **Social features**: User profiles, follow system, privacy controls
+- **Environment-aware**: Automatically uses correct database and settings for local vs production
 - **PWA ready**: Service worker and manifest configured for mobile installation
 - **Responsive design**: Works on desktop, tablet, and mobile devices
 - **Type-safe**: Full TypeScript support in frontend
