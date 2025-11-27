@@ -195,6 +195,22 @@ function BookDetailContent() {
     setSaving(false);
   };
 
+  const handleDeleteRating = async () => {
+    if (!existingRating) {
+      return;
+    }
+
+    setSaving(true);
+    const response = await apiClient.deleteRating(existingRating.id);
+    if (response.data) {
+      setExistingRating(null);
+      setRating(null);
+    } else {
+      setError(response.error || 'Could not remove rating.');
+    }
+    setSaving(false);
+  };
+
   if (loading) {
     return (
       <div style={{
@@ -329,18 +345,37 @@ function BookDetailContent() {
           Rate this book
         </h2>
         <StarRating
-          rating={rating || 0}
+          rating={rating ?? 0}
           onRatingChange={handleSaveRating}
+          onRatingClear={handleDeleteRating}
+          allowClear
           size={32}
         />
         {existingRating && (
-          <p style={{
-            color: colors.textLight,
-            fontSize: '0.9rem',
-            marginTop: '0.5rem',
-          }}>
-            Your rating: {existingRating.rating} stars
-          </p>
+          <div style={{ marginTop: '0.5rem' }}>
+            <p style={{
+              color: colors.textLight,
+              fontSize: '0.9rem',
+              marginBottom: '0.25rem',
+            }}>
+              Your rating: {existingRating.rating} stars
+            </p>
+            <button
+              onClick={handleDeleteRating}
+              disabled={saving}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: colors.error,
+                cursor: saving ? 'not-allowed' : 'pointer',
+                fontSize: '0.85rem',
+                textDecoration: 'underline',
+                padding: 0,
+              }}
+            >
+              Remove rating
+            </button>
+          </div>
         )}
       </div>
 

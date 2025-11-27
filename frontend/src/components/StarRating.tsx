@@ -6,17 +6,33 @@ import { colors } from '@/theme';
 interface StarRatingProps {
   rating: number;
   onRatingChange?: (rating: number) => void;
+  onRatingClear?: () => void;
   readonly?: boolean;
   size?: number;
+  allowClear?: boolean;
 }
 
-export function StarRating({ rating, onRatingChange, readonly = false, size = 24 }: StarRatingProps) {
+export function StarRating({
+  rating,
+  onRatingChange,
+  onRatingClear,
+  readonly = false,
+  size = 24,
+  allowClear = false,
+}: StarRatingProps) {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
   const handleClick = (value: number) => {
-    if (!readonly && onRatingChange) {
-      onRatingChange(value);
+    if (readonly) {
+      return;
     }
+
+    if (allowClear && value === rating) {
+      onRatingClear?.();
+      return;
+    }
+
+    onRatingChange?.(value);
   };
 
   const displayRating = hoveredRating ?? rating;
