@@ -1,6 +1,6 @@
 {
-  "name": "BlueberryBooks",
-  "short_name": "BlueberryBooks",
+  "name": "Blueberry Books",
+  "short_name": "Blueberry",
   "description": "All-in-one book diary for reviews and ratings",
   "start_url": "/",
   "display": "standalone",
